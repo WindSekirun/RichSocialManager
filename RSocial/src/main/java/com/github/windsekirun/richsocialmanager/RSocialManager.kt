@@ -6,10 +6,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import com.facebook.CallbackManager
 import com.facebook.FacebookSdk
-import com.github.windsekirun.richsocialmanager.sns.RFacebook
-import com.github.windsekirun.richsocialmanager.sns.RKakao
-import com.github.windsekirun.richsocialmanager.sns.RNaver
-import com.github.windsekirun.richsocialmanager.sns.RTwitter
+import com.github.windsekirun.richsocialmanager.sns.*
+import com.kakao.auth.KakaoSDK
 import com.kakao.auth.Session
 import com.kakao.usermgmt.LoginButton
 import com.twitter.sdk.android.core.Twitter
@@ -136,11 +134,19 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
         @JvmField val TWITTER = "twitter"
 
         @JvmStatic fun initializeApplication(context: Context, consumerKey: String, consumerSecret: String) {
+            // initialize twitter sdk
             val config = TwitterConfig.Builder(context)
                     .twitterAuthConfig(TwitterAuthConfig(consumerKey, consumerSecret))
                     .build()
             Twitter.initialize(config)
+
+            // initialize facebook sdk
+            FacebookSdk.sdkInitialize(context)
+
+            // initialize kakao sdk
+            KakaoSDK.init(KakaoSDKAdapter(context))
         }
+
     }
 
     interface OnLoginListener {
