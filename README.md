@@ -5,8 +5,8 @@ This library help you to integrate Social Login, Share to SNS feature
 
 ## Supported Social Service
 
-Login -> Facebook, KakaoTalk, Naver (not a SNS)
-Share -> Facebook, KakaoTalk, Twitter
+* Login -> Facebook, KakaoTalk, Naver (not a SNS)
+* Share -> Facebook, KakaoTalk, Twitter
 
 
 ### Usages
