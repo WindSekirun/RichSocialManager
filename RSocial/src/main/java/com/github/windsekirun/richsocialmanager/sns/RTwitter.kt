@@ -44,7 +44,7 @@ class RTwitter constructor(val context: Context) : Observer {
     /**
      * post into Twitter Api
      */
-    fun postCompose(content: String) {
+    fun postTwitter(content: String) {
         val session = TwitterCore.getInstance().sessionManager.activeSession
         val intent = ComposerActivity.Builder(context)
                 .session(session)

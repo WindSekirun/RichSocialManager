@@ -7,7 +7,9 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
+import org.json.JSONObject
 import pyxis.uzuki.live.richutilskt.utils.getJSONString
+import pyxis.uzuki.live.richutilskt.utils.put
 
 
 /**
@@ -40,10 +42,10 @@ class RNaver constructor(var context: Context, oAuthClientId: String, oAuthClien
     /**
      * Set login listener of Naver Api
      */
-    fun setLoginListener(callback: (String, String, String) -> Unit) {
+    fun setLoginListener(callback: (JSONObject) -> Unit) {
         this.listener = object: OnLoginListener {
-            override fun onLogin(id: String, name: String, email: String) {
-                callback.invoke(id, name, email)
+            override fun onLogin(jObject: JSONObject) {
+               callback.invoke(jObject)
             }
         }
     }
@@ -64,8 +66,14 @@ class RNaver constructor(var context: Context, oAuthClientId: String, oAuthClien
                         val name = responseObject.getJSONString("name")
                         val email = responseObject.getJSONString("email")
 
+                        val userObj = JSONObject()
+                        put(userObj, "id", id)
+                        put(userObj, "name", name)
+                        put(userObj, "email", email)
+
+
                         if (listener != null) {
-                            listener?.onLogin(id, name, email)
+                            listener?.onLogin(userObj)
                         }
                     }, {})
                 })
@@ -74,6 +82,6 @@ class RNaver constructor(var context: Context, oAuthClientId: String, oAuthClien
     }
 
     interface OnLoginListener {
-        fun onLogin(id: String, name: String, email: String)
+        fun onLogin(jObject: JSONObject)
     }
 }

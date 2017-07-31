@@ -159,7 +159,7 @@ class RFacebook constructor(val activity: Activity) {
     }
 
     interface OnLoginListener {
-        fun onLogin(jsonStr: JSONObject)
+        fun onLogin(jObject: JSONObject)
     }
 
     interface OnPostCallbackListener {
