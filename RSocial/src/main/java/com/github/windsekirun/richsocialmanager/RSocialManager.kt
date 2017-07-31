@@ -1,27 +1,17 @@
 package com.github.windsekirun.richsocialmanager
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Fragment
-import android.app.FragmentManager
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.facebook.CallbackManager
 import com.facebook.FacebookSdk
 import com.github.windsekirun.richsocialmanager.sns.*
 import com.kakao.auth.KakaoSDK
 import com.kakao.auth.Session
-import com.kakao.usermgmt.LoginButton
 import com.twitter.sdk.android.core.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import com.twitter.sdk.android.core.TwitterConfig
-import kotlinx.android.synthetic.main.fragment_login_button.*
 import org.json.JSONObject
 
 
@@ -86,8 +76,14 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
         }
     }
 
+    /*
+     * Limitation of RSocialManager
+     * Kakao api make must use LoginButton.
+     * so, i find other solution..
+     */
+
     /**
-     * perform Login using Kakao / Facebook / Naver Api
+     * perform Login using  Facebook / Naver Api
      *
      * @param[api] name of Api
      */
@@ -109,7 +105,7 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
     /**
      * perform Post using Kakao Api
      */
-    fun postAsKakao(title: String, imageUrl: String, message: String, buttonTitle: String, buttonUrl: String) {
+    fun postAsKakao(title: String, message: String, imageUrl: String, buttonTitle: String, buttonUrl: String) {
         kakaoApi.postKakaoLink(title, imageUrl, message, buttonTitle, buttonUrl)
     }
 
@@ -130,7 +126,7 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
 
     companion object {
         @JvmField val POST_SUCCESS = 0
-        @JvmField val POST_FAILED = 1
+        @JvmField val POST_FAILED = -1
 
         @JvmField val FACEBOOK = "facebook"
         @JvmField val KAKAO = "kakao"

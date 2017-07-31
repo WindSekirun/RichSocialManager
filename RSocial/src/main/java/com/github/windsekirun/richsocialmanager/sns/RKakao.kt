@@ -91,7 +91,7 @@ class RKakao constructor(var context: Context) {
     /**
      * post kakaoLink
      */
-    fun postKakaoLink(title: String, imageUrl: String, message: String, buttonTitle: String, buttonUrl: String) {
+    fun postKakaoLink(title: String, message: String, imageUrl: String,  buttonTitle: String, buttonUrl: String) {
         val linkObject = LinkObject.newBuilder()
                 .build()
         val buttonLinkObject = LinkObject.newBuilder()
