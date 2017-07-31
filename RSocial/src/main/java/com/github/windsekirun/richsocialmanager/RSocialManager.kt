@@ -93,18 +93,9 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
      */
     fun login(api: String) {
         when (api) {
-            KAKAO -> loginAsKakao()
             FACEBOOK -> loginAsFacebook()
             NAVER -> loginAsNaver()
         }
-    }
-
-    private fun loginAsKakao() {
-        val fm = getActivity(activity)?.fragmentManager
-        val fragment = RequestFragment(fm as FragmentManager)
-
-        fm.beginTransaction().add(fragment, "FRAGMENT_TAG").commitAllowingStateLoss()
-        fm.executePendingTransactions()
     }
 
     private fun loginAsFacebook() {
@@ -136,35 +127,6 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
         twitterApi.postTwitter(content)
     }
 
-    private fun getActivity(context: Context): Activity? {
-        var c = context
-
-        while (c is ContextWrapper) {
-            if (c is Activity) {
-                return c
-            }
-            c = c.baseContext
-        }
-        return null
-    }
-
-    @SuppressLint("ValidFragment")
-    inner class RequestFragment() : Fragment() {
-        var fm: FragmentManager? = null
-
-        constructor(fm: FragmentManager) : this() {
-            this.fm = fm
-        }
-
-        override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            val view = inflater?.inflate(R.layout.fragment_login_button, container)
-
-            val btnPerformKakao = view?.findViewById(R.id.btnPerformKakao)
-            btnPerformKakao?.performClick()
-
-            return view
-        }
-    }
 
     companion object {
         @JvmField val POST_SUCCESS = 0
