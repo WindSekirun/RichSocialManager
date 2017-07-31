@@ -1,9 +1,10 @@
 package com.github.windsekirun.richsocialmanager.sns
 
 import android.content.Context
+import android.net.Uri
+import android.text.TextUtils
 import com.github.windsekirun.richsocialmanager.RSocialManager
-import com.twitter.sdk.android.core.TwitterCore
-import com.twitter.sdk.android.tweetcomposer.ComposerActivity
+import com.twitter.sdk.android.tweetcomposer.TweetComposer
 import java.util.*
 
 
@@ -44,14 +45,14 @@ class RTwitter constructor(val context: Context) : Observer {
     /**
      * post into Twitter Api
      */
-    fun postTwitter(content: String) {
-        val session = TwitterCore.getInstance().sessionManager.activeSession
-        val intent = ComposerActivity.Builder(context)
-                .session(session)
+    fun postTwitter(content: String, imageUrl: String = "") {
+        val builder = TweetComposer.Builder(context)
                 .text(content)
-                .createIntent()
 
-        context.startActivity(intent)
+        if (!TextUtils.isEmpty(imageUrl))
+            builder.image(Uri.parse(imageUrl))
+
+        builder.show()
     }
 
     interface OnPostCallbackListener {

@@ -119,10 +119,9 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
     /**
      * perform Post using Twitter Api
      */
-    fun postAsTwitter(content: String) {
-        twitterApi.postTwitter(content)
+    @JvmOverloads fun postAsTwitter(content: String, imageUrl: String = "") {
+        twitterApi.postTwitter(content, imageUrl)
     }
-
 
     companion object {
         @JvmField val POST_SUCCESS = 0
