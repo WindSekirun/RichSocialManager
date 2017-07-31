@@ -43,11 +43,11 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
 
         facebookCallbackManager = CallbackManager.Factory.create()
 
-        kakaoApi.setOnLoginListener { loginListener.onKakao(it) }
+        kakaoApi.setOnLoginListener { loginListener.onLoginKakao(it) }
         kakaoApi.setOnCallbackListener { postCallbackListener.onKakaoResult(it) }
-        facebookApi.setOnLoginListener { loginListener.onFacebook(it) }
+        facebookApi.setOnLoginListener { loginListener.onLoginFacebook(it) }
         facebookApi.setOnCallbackListener { postCallbackListener.onFacebookResult(it) }
-        naverApi.setLoginListener { loginListener.onNaver(it) }
+        naverApi.setLoginListener { loginListener.onLoginNaver(it) }
         twitterApi.setOnCallbackListener { postCallbackListener.onTwitterResult(it) }
     }
 
@@ -144,9 +144,9 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
     }
 
     interface OnLoginListener {
-        fun onKakao(jObject: JSONObject)
-        fun onFacebook(jObject: JSONObject)
-        fun onNaver(jObject: JSONObject)
+        fun onLoginKakao(jObject: JSONObject)
+        fun onLoginFacebook(jObject: JSONObject)
+        fun onLoginNaver(jObject: JSONObject)
     }
 
     interface OnPostCallbackListener {
