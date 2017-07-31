@@ -25,10 +25,10 @@ dependencies {
     compile 'com.github.kittinunf.fuel:fuel-android:1.9.0'
 
     // kakao
-    compile group: 'com.kakao.sdk', name: 'usermgmt', version: project.KAKAO_SDK_VERSION
-    compile group: 'com.kakao.sdk', name: 'kakaostory', version: project.KAKAO_SDK_VERSION
-    compile group: 'com.kakao.sdk', name: 'kakaolink', version: project.KAKAO_SDK_VERSION
-    compile group: 'com.kakao.sdk', name: 'kakaotalk', version: project.KAKAO_SDK_VERSION
+    compile group: 'com.kakao.sdk', name: 'usermgmt', version: 1.4.1
+    compile group: 'com.kakao.sdk', name: 'kakaostory', version: 1.4.1
+    compile group: 'com.kakao.sdk', name: 'kakaolink', version: 1.4.1
+    compile group: 'com.kakao.sdk', name: 'kakaotalk', version: 1.4.1
 
     // facebook
     compile 'com.facebook.android:facebook-android-sdk:4.23.0'
