@@ -1,9 +1,17 @@
 package com.github.windsekirun.richsocialmanager
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Fragment
+import android.app.FragmentManager
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.facebook.CallbackManager
 import com.facebook.FacebookSdk
 import com.github.windsekirun.richsocialmanager.sns.*
@@ -13,6 +21,7 @@ import com.kakao.usermgmt.LoginButton
 import com.twitter.sdk.android.core.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import com.twitter.sdk.android.core.TwitterConfig
+import kotlinx.android.synthetic.main.fragment_login_button.*
 import org.json.JSONObject
 
 
@@ -91,8 +100,11 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
     }
 
     private fun loginAsKakao() {
-        val btnKakao = LoginButton(activity)
-        btnKakao.performClick()
+        val fm = getActivity(activity)?.fragmentManager
+        val fragment = RequestFragment(fm as FragmentManager)
+
+        fm.beginTransaction().add(fragment, "FRAGMENT_TAG").commitAllowingStateLoss()
+        fm.executePendingTransactions()
     }
 
     private fun loginAsFacebook() {
@@ -124,6 +136,36 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
         twitterApi.postTwitter(content)
     }
 
+    private fun getActivity(context: Context): Activity? {
+        var c = context
+
+        while (c is ContextWrapper) {
+            if (c is Activity) {
+                return c
+            }
+            c = c.baseContext
+        }
+        return null
+    }
+
+    @SuppressLint("ValidFragment")
+    inner class RequestFragment() : Fragment() {
+        var fm: FragmentManager? = null
+
+        constructor(fm: FragmentManager) : this() {
+            this.fm = fm
+        }
+
+        override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            val view = inflater?.inflate(R.layout.fragment_login_button, container)
+
+            val btnPerformKakao = view?.findViewById(R.id.btnPerformKakao)
+            btnPerformKakao?.performClick()
+
+            return view
+        }
+    }
+
     companion object {
         @JvmField val POST_SUCCESS = 0
         @JvmField val POST_FAILED = 1
@@ -134,6 +176,9 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
         @JvmField val TWITTER = "twitter"
 
         @JvmStatic fun initializeApplication(context: Context, consumerKey: String, consumerSecret: String) {
+            // initialize kakao sdk
+            KakaoSDK.init(KakaoSDKAdapter(context))
+
             // initialize twitter sdk
             val config = TwitterConfig.Builder(context)
                     .twitterAuthConfig(TwitterAuthConfig(consumerKey, consumerSecret))
@@ -142,9 +187,6 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
 
             // initialize facebook sdk
             FacebookSdk.sdkInitialize(context)
-
-            // initialize kakao sdk
-            KakaoSDK.init(KakaoSDKAdapter(context))
         }
 
     }
