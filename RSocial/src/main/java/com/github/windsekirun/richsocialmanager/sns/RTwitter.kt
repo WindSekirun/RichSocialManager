@@ -1,10 +1,13 @@
 package com.github.windsekirun.richsocialmanager.sns
 
-import android.content.Context
+import android.app.Activity
 import android.net.Uri
-import android.text.TextUtils
+import android.util.Log
 import com.github.windsekirun.richsocialmanager.RSocialManager
-import com.twitter.sdk.android.tweetcomposer.TweetComposer
+import com.github.windsekirun.richsocialmanager.receiver.ObservableObject
+import com.twitter.sdk.android.core.*
+import com.twitter.sdk.android.core.identity.TwitterAuthClient
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 import java.util.*
 
 
@@ -13,7 +16,7 @@ import java.util.*
  * Class: ${FILE_NAME}
  * Created by winds on 2017-07-31.
  */
-class RTwitter constructor(val context: Context) : Observer {
+class RTwitter constructor(val activity: Activity) : Observer {
     private var callbackListener: OnPostCallbackListener? = null
 
     override fun update(observable: Observable?, data: Any?) {
@@ -31,6 +34,18 @@ class RTwitter constructor(val context: Context) : Observer {
         }
     }
 
+    fun login(twitterAuthClient: TwitterAuthClient, callback: () -> Unit) {
+        twitterAuthClient.authorize(activity, object : Callback<TwitterSession>() {
+            override fun failure(exception: TwitterException?) {
+                Log.e("failureTwitter", exception?.message)
+            }
+
+            override fun success(result: Result<TwitterSession>?) {
+                callback.invoke()
+            }
+        })
+    }
+
     /**
      * Set callback on result code of Sending kakaolink
      */
@@ -45,14 +60,16 @@ class RTwitter constructor(val context: Context) : Observer {
     /**
      * post into Twitter Api
      */
-    fun postTwitter(content: String, imageUrl: String = "") {
-        val builder = TweetComposer.Builder(context)
+    fun postTwitter(content: String, imageUrl: Uri? = null) {
+        ObservableObject.instance.addObserver(this)
+        val session = TwitterCore.getInstance().sessionManager.activeSession
+        val intent = ComposerActivity.Builder(activity)
+                .session(session)
                 .text(content)
+                .image(imageUrl)
+                .createIntent()
 
-        if (!TextUtils.isEmpty(imageUrl))
-            builder.image(Uri.parse(imageUrl))
-
-        builder.show()
+        activity.startActivity(intent)
     }
 
     interface OnPostCallbackListener {

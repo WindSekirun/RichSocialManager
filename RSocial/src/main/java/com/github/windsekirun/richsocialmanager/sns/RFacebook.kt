@@ -87,7 +87,7 @@ class RFacebook constructor(val activity: Activity) {
     }
 
     /**
-     * Set callback on result code of Sending kakaolink
+     * Set callback on result code of Sending facebook post
      */
     fun setOnCallbackListener(callback: (Int) -> Unit) {
         this.callbackListener = object : OnPostCallbackListener {
@@ -128,6 +128,10 @@ class RFacebook constructor(val activity: Activity) {
                     .addPhoto(photo)
                     .build()
             shareDialog.show(content)
+        } else {
+            if (callbackListener != null) {
+                callbackListener?.onSuccess(RSocialManager.POST_FAILED)
+            }
         }
     }
 

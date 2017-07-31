@@ -3,7 +3,9 @@ package com.github.windsekirun.richsocialmanager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import com.facebook.CallbackManager
 import com.facebook.FacebookSdk
 import com.github.windsekirun.richsocialmanager.sns.*
@@ -12,7 +14,9 @@ import com.kakao.auth.Session
 import com.twitter.sdk.android.core.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import com.twitter.sdk.android.core.TwitterConfig
+import com.twitter.sdk.android.core.identity.TwitterAuthClient
 import org.json.JSONObject
+import pyxis.uzuki.live.richutilskt.utils.confirm
 
 
 /**
@@ -26,6 +30,7 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
     private val kakaoApi: RKakao = RKakao(activity)
     private val naverApi: RNaver = RNaver(activity, oAuthClientId, oAuthClientSecret, clientName)
     private val twitterApi: RTwitter = RTwitter(activity)
+    private val twitterAuthClient = TwitterAuthClient()
 
     private lateinit var loginListener: OnLoginListener
     private lateinit var postListener: OnPostCallbackListener
@@ -74,6 +79,8 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
             facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
             return
         }
+
+        twitterAuthClient.onActivityResult(requestCode, resultCode, data)
     }
 
     /*
@@ -106,21 +113,49 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
      * perform Post using Kakao Api
      */
     fun postAsKakao(title: String, message: String, imageUrl: String, buttonTitle: String, buttonUrl: String) {
-        kakaoApi.postKakaoLink(title, imageUrl, message, buttonTitle, buttonUrl)
+        if (isAppInstalled(KAKAO_PACKAGE)) {
+            kakaoApi.postKakaoLink(title, imageUrl, message, buttonTitle, buttonUrl)
+        } else {
+            activity.confirm(message = "You don't have KakaoTalk App. Do you want to go Play Store?", callback = {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse("market://details?id=$KAKAO_PACKAGE")
+                activity.startActivity(intent)
+            })
+        }
     }
 
     /**
      * perform Post using Facebook Api
      */
     fun postAsFacebook(content: String, bitmap: Bitmap) {
-        facebookApi.postFacebook(content, bitmap, facebookCallbackManager)
+        if (isAppInstalled(FACEBOOK_PACKAGE)) {
+            facebookApi.postFacebook(content, bitmap, facebookCallbackManager)
+        } else {
+            activity.confirm(message = "You don't have Facebook App. Do you want to go Play Store?", callback = {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse("market://details?id=$FACEBOOK_PACKAGE")
+                activity.startActivity(intent)
+            })
+        }
     }
 
     /**
      * perform Post using Twitter Api
      */
-    @JvmOverloads fun postAsTwitter(content: String, imageUrl: String = "") {
-        twitterApi.postTwitter(content, imageUrl)
+    @JvmOverloads fun postAsTwitter(content: String, imageUrl: Uri? = null) {
+        twitterApi.login(twitterAuthClient, {
+            twitterApi.postTwitter(content, imageUrl)
+        })
+    }
+
+    fun isAppInstalled(packageName: String): Boolean {
+        try {
+            activity.packageManager.getApplicationInfo(packageName, 0)
+            return true
+        } catch (e: PackageManager.NameNotFoundException) {
+            return false
+        }
+
     }
 
     companion object {
@@ -131,6 +166,9 @@ class RSocialManager constructor(val activity: Activity, oAuthClientId: String =
         @JvmField val KAKAO = "kakao"
         @JvmField val NAVER = "naver"
         @JvmField val TWITTER = "twitter"
+
+        @JvmField val FACEBOOK_PACKAGE = "com.facebook.katana"
+        @JvmField val KAKAO_PACKAGE = "com.kakao.talk"
 
         @JvmStatic fun initializeApplication(context: Context, consumerKey: String, consumerSecret: String) {
             // initialize kakao sdk
