@@ -23,7 +23,7 @@ allprojects {
 *app/build.gradle*
 ```
 dependencies {
-    compile 'com.github.WindSekirun:RichSocialManager:1.0.0'
+    compile 'com.github.WindSekirun:RichSocialManager:1.0.1'
 }
 ```
 
