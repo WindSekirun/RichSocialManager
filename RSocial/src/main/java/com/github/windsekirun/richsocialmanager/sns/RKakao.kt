@@ -26,7 +26,7 @@ import pyxis.uzuki.live.richutilskt.utils.put
  * Class: RKakao
  * Created by winds on 2017-07-31.
  */
-class RKakao constructor(var context: Context) {
+class RKakao @JvmOverloads constructor(var context: Context, val isGetEmail: Boolean = true) {
     private val callback: SessionCallback
     private var loginListener: OnLoginListener? = null
     private var callbackListener: OnPostCallbackListener? = null
@@ -91,7 +91,7 @@ class RKakao constructor(var context: Context) {
     /**
      * post kakaoLink
      */
-    fun postKakaoLink(title: String, message: String, imageUrl: String,  buttonTitle: String, buttonUrl: String) {
+    fun postKakaoLink(title: String, message: String, imageUrl: String, buttonTitle: String, buttonUrl: String) {
         val linkObject = LinkObject.newBuilder()
                 .build()
         val buttonLinkObject = LinkObject.newBuilder()
@@ -124,6 +124,12 @@ class RKakao constructor(var context: Context) {
     }
 
     private fun requestMe() {
+        val propertyKeys: ArrayList<String>
+        if (isGetEmail)
+            propertyKeys = arrayListOf("kaccount_email", "nickname")
+        else
+            propertyKeys = arrayListOf()
+
         UserManagement.requestMe(object : MeResponseCallback() {
             override fun onFailure(errorResult: ErrorResult?) {
                 val message = "failed to get user info. msg=${errorResult?.errorMessage}"
@@ -138,7 +144,8 @@ class RKakao constructor(var context: Context) {
 
                 val userObj = JSONObject()
                 put(userObj, "id", userProfile.id)
-                put(userObj, "name", userProfile.nickname)
+                put(userObj, "name", userProfile.nickname ?: "")
+                put(userObj, "email", userProfile.email)
 
                 if (loginListener != null) {
                     (loginListener as OnLoginListener).onLogin(userObj)
@@ -146,7 +153,7 @@ class RKakao constructor(var context: Context) {
             }
 
             override fun onNotSignedUp() {}
-        })
+        }, propertyKeys, false)
     }
 
     private inner class SessionCallback : ISessionCallback {

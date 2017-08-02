@@ -25,9 +25,9 @@ import pyxis.uzuki.live.richutilskt.utils.confirm
  * Created by winds on 2017-07-31.
  */
 
-class RSocialManager constructor(val activity: Activity, oAuthClientId: String = "", oAuthClientSecret: String = "", clientName: String = "") {
+class RSocialManager @JvmOverloads constructor(val activity: Activity, oAuthClientId: String = "", oAuthClientSecret: String = "", clientName: String = "", isKakaoEmail: Boolean = true) {
     private val facebookApi: RFacebook = RFacebook(activity)
-    private val kakaoApi: RKakao = RKakao(activity)
+    private val kakaoApi: RKakao = RKakao(activity, isKakaoEmail)
     private val naverApi: RNaver = RNaver(activity, oAuthClientId, oAuthClientSecret, clientName)
     private val twitterApi: RTwitter = RTwitter(activity)
     private val twitterAuthClient = TwitterAuthClient()
