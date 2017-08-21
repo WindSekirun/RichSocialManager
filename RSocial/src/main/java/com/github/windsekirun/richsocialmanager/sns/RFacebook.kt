@@ -3,6 +3,7 @@ package com.github.windsekirun.richsocialmanager.sns
 import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.widget.Toast
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -127,7 +128,7 @@ class RFacebook constructor(val activity: Activity) {
             val content = SharePhotoContent.Builder()
                     .addPhoto(photo)
                     .build()
-            shareDialog.show(content)
+            shareDialog.show(content, ShareDialog.Mode.FEED)
         } else {
             if (callbackListener != null) {
                 callbackListener?.onSuccess(RSocialManager.POST_FAILED)
