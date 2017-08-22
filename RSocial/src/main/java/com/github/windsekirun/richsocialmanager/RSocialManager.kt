@@ -70,7 +70,7 @@ class RSocialManager @JvmOverloads constructor(val activity: Activity, oAuthClie
     /**
      * Call this method in Activity.onActivityResult()
      */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
             return
         }
